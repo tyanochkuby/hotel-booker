@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HotelBooker": {
+      "commandName": "Project",
+      "commandLineArgs": "--hotels hotels.json\r\n--bookings bookings.json",
+      "workingDirectory": "D:\\hoojnia\\C#\\HotelBooker"
+    }
+  }
+}
