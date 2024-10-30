@@ -34,6 +34,8 @@ public class Program
             return;
         }
 
+        Console.WriteLine("Jsons were loaded successfully");
+
         AvailabilityService availabilityService = new AvailabilityService(hotels, bookings);
 
         string input;
