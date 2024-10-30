@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HotelBooker.Helpers
 {
@@ -8,14 +8,14 @@ namespace HotelBooker.Helpers
     {
         private const string Format = "yyyyMMdd";
 
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override void WriteJson(JsonWriter writer, DateTime value, JsonSerializer serializer)
         {
-            return DateTime.ParseExact(reader.GetString(), Format, null);
+            writer.WriteValue(value.ToString(Format));
         }
 
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        public override DateTime ReadJson(JsonReader reader, Type objectType, DateTime existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            writer.WriteStringValue(value.ToString(Format));
+            return DateTime.ParseExact((string)reader.Value, Format, null);
         }
     }
 }

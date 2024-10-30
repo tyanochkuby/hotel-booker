@@ -1,25 +1,29 @@
 ﻿using HotelBooker.Helpers;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace HotelBooker.Models
 {
     public class Booking
     {
-        [JsonPropertyName("hotelId")]
+        [JsonProperty("hotelId")]
+        [JsonRequired]
         public string HotelId { get; set; }
 
-        [JsonPropertyName("arrival")]
+        [JsonProperty("arrival")]
         [JsonConverter(typeof(DateTimeJsonConverter))]
+        [JsonRequired]
         public DateTime Arrival { get; set; }
 
-        [JsonPropertyName("departure")]
+        [JsonProperty("departure")]
+        [JsonRequired]
         [JsonConverter(typeof(DateTimeJsonConverter))]
         public DateTime Departure { get; set; }
 
-        [JsonPropertyName("roomType")]
+        [JsonProperty("roomType")]
+        [JsonRequired]
         public string RoomType { get; set; }
 
-        [JsonPropertyName("roomRate")]
+        [JsonProperty("roomRate")]
         public string RoomRate { get; set; }
     }
 }

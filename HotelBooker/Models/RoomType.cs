@@ -1,19 +1,20 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace HotelBooker.Models
 {
     public class RoomType
     {
-        [JsonPropertyName("code")]
+        [JsonProperty("code")]
+        [JsonRequired]
         public string Code { get; set; }
 
-        [JsonPropertyName("description")]
+        [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonPropertyName("amenities")]
+        [JsonProperty("amenities")]
         public List<string> Amenities { get; set; }
 
-        [JsonPropertyName("features")]
+        [JsonProperty("features")]
         public List<string> Features { get; set; }
     }
 

@@ -2,39 +2,35 @@
 using HotelBooker.Helpers;
 using HotelBooker.Models;
 using HotelBooker.Services;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 public class Program
 {
     public static async Task Main(string[] args)
     {
-        var config = CommandLineConfigurator.GetConfig(args);
+        var config = ConfigurationManager.GetConfig(args);
 
-        if (!File.Exists(config["Bookings"]) || !File.Exists(config["Hotels"]))
+        if (!ConfigurationManager.ValidateConfig(config))
         {
-            Console.WriteLine("Bad input, files not found");
             return;
         }
-        
-        string hotelsJson = await File.ReadAllTextAsync(config["Hotels"]);
-        string bookingsJson = await File.ReadAllTextAsync(config["Bookings"]);
 
-        List<Hotel> hotels = new List<Hotel>();
-        List<Booking> bookings = new List<Booking>();
+        List<Hotel> hotels;
+        List<Booking> bookings;
 
-        try
+        if (!ConfigurationManager.TryLoadJson(config["Hotels"], out hotels) ||
+            !ConfigurationManager.TryLoadJson(config["Bookings"], out bookings))
         {
-            hotels = JsonSerializer.Deserialize<List<Hotel>>(hotelsJson);
-            bookings = JsonSerializer.Deserialize<List<Booking>>(bookingsJson);
+            return;
         }
-        catch (JsonException e)
+
+        if (!DataValidator.ValidateData(hotels, bookings))
         {
-            Console.WriteLine(e.Message);
             return;
         }
 
         Console.WriteLine("Jsons were loaded successfully");
+
 
         AvailabilityService availabilityService = new AvailabilityService(hotels, bookings);
 
