@@ -11,20 +11,19 @@ namespace HotelBooker.Extensions
     {
         public static Dictionary<string, Dictionary<string, List<DateRange>>> ToBookingDictionary(this List<Booking> bookings)
         {
-            var bookingDict = new Dictionary<string, Dictionary<string, List<DateRange>>>();
-
-            foreach (var booking in bookings)
-            {
-                if (!bookingDict.ContainsKey(booking.HotelId))
-                    bookingDict[booking.HotelId] = new Dictionary<string, List<DateRange>>();
-
-                if (!bookingDict[booking.HotelId].ContainsKey(booking.RoomType))
-                    bookingDict[booking.HotelId][booking.RoomType] = new List<DateRange>();
-
-                bookingDict[booking.HotelId][booking.RoomType].Add(new DateRange(booking.Arrival, booking.Departure));
-            }
-
-            return bookingDict;
+            return bookings
+                .GroupBy(b => b.HotelId)
+                .ToDictionary(
+                    hotelGroup => hotelGroup.Key,
+                    hotelGroup => hotelGroup
+                        .GroupBy(b => b.RoomType)
+                        .ToDictionary(
+                            roomGroup => roomGroup.Key,
+                            roomGroup => roomGroup
+                                .Select(b => new DateRange(b.Arrival, b.Departure))
+                                .ToList()
+                        )
+                );
         }
     }
 }

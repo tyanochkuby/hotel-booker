@@ -1,29 +1,23 @@
 ﻿using HotelBooker.Helpers;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace HotelBookerUTests
 {
-    
     [TestFixture]
     public class DateTimeJsonConverterTests
     {
         private DateTimeJsonConverter _converter;
-        private JsonSerializerOptions _options;
+        private JsonSerializer _serializer;
 
         [SetUp]
         public void Setup()
         {
             _converter = new DateTimeJsonConverter();
-            _options = new JsonSerializerOptions
-            {
-                Converters = { _converter }
-            };
+            _serializer = new JsonSerializer();
+            _serializer.Converters.Add(_converter);
         }
 
         [Test]
@@ -31,11 +25,10 @@ namespace HotelBookerUTests
         {
             // Arrange
             string json = "\"20230101\"";
-            var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(json));
+            var reader = new JsonTextReader(new StringReader(json));
 
             // Act
-            reader.Read();
-            DateTime result = _converter.Read(ref reader, typeof(DateTime), _options);
+            var result = _serializer.Deserialize<DateTime>(reader);
 
             // Assert
             Assert.That(result, Is.EqualTo(new DateTime(2023, 1, 1)));
@@ -46,18 +39,16 @@ namespace HotelBookerUTests
         {
             // Arrange
             DateTime date = new DateTime(2023, 1, 1);
-            var buffer = new ArrayBufferWriter<byte>();
-            var writer = new Utf8JsonWriter(buffer);
+            var stringWriter = new StringWriter();
+            var writer = new JsonTextWriter(stringWriter);
 
             // Act
-            _converter.Write(writer, date, _options);S
+            _serializer.Serialize(writer, date);
             writer.Flush();
-            string json = System.Text.Encoding.UTF8.GetString(buffer.WrittenMemory.ToArray());
+            string json = stringWriter.ToString();
 
             // Assert
-            Assert.That(json, Is.EqualTo("\"20230101\"")S);
+            Assert.That(json, Is.EqualTo("\"20230101\""));
         }
     }
 }
-
-

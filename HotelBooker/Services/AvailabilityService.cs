@@ -22,10 +22,16 @@ namespace HotelBooker.Services
 
         public int GetCountAvailable(Availability availability)
         {
-            int roomCount = _hotelsAvailability[availability.Code][availability.RoomType];
-            List<DateRange> bookedDates = _bookingRanges[availability.Code][availability.RoomType];
-
-            return roomCount - bookedDates.Count(dateRange => dateRange.Overlaps(availability.DateRange));
+            try
+            {
+                int roomCount = _hotelsAvailability[availability.Code][availability.RoomType];
+                List<DateRange> bookedDates = _bookingRanges[availability.Code][availability.RoomType];
+                return roomCount - bookedDates.Count(dateRange => dateRange.Overlaps(availability.DateRange));
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new KeyNotFoundException("Hotel or room type not found");
+            }            
         }
 
     }

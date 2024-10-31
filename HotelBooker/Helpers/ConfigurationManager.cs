@@ -5,12 +5,14 @@ namespace HotelBooker.Helpers
 {
     public static class ConfigurationManager
     {
+        const string HOTELS = "Hotels";
+        const string BOOKINGS = "Bookings";
         public static IConfigurationRoot GetConfig(string[] args)
         {
             var switchMappings = new Dictionary<string, string>()
             {
-                { "--hotels", "Hotels" },
-                { "--bookings", "Bookings" },
+                { "--hotels", HOTELS },
+                { "--bookings", BOOKINGS },
             };
             var builder = new ConfigurationBuilder();
             builder.AddCommandLine(args, switchMappings);
@@ -20,13 +22,13 @@ namespace HotelBooker.Helpers
 
         public static bool ValidateConfig(IConfiguration config)
         {
-            if (string.IsNullOrEmpty(config["Hotels"]) || string.IsNullOrEmpty(config["Bookings"]))
+            if (string.IsNullOrEmpty(config[HOTELS]) || string.IsNullOrEmpty(config[BOOKINGS]))
             {
                 Console.WriteLine("Configuration values for Hotels or Bookings are missing.");
                 return false;
             }
 
-            if (!File.Exists(config["Hotels"]) || !File.Exists(config["Bookings"]))
+            if (!File.Exists(config[HOTELS]) || !File.Exists(config[BOOKINGS]))
             {
                 Console.WriteLine("Bad input, files not found");
                 return false;

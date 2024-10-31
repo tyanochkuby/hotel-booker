@@ -11,10 +11,10 @@ namespace HotelBooker.Extensions
 {
     public static class StringExtensions
     {
+        const string AVAILABILITY_PATTERN = @"^\s*Availability\(\s*(\w+)\s*,\s*(\d{8})\s*(?:-\s*(\d{8})\s*)?,\s*(\w+)\s*\)\s*$";
         public static Availability ToAvailability(this string input)
         {
-            var pattern = @"^\s*Availability\(\s*(\w+)\s*,\s*(\d{8})\s*(?:-\s*(\d{8})\s*)?,\s*(\w+)\s*\)\s*$";
-            var match = Regex.Match(input, pattern);
+            var match = Regex.Match(input, AVAILABILITY_PATTERN);
 
             if (!match.Success)
                 throw new FormatException("Input string is not in the expected format.");

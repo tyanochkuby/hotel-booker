@@ -42,13 +42,20 @@ public class Program
             {
                 availability = input.ToAvailability();
             }
-            catch (ArgumentException e)
+            catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
                 continue;
             }
 
-            Console.WriteLine($"There's {availabilityService.GetCountAvailable(availability)} rooms of type {availability.RoomType} available in the {hotels.First(h => h.Id == availability.Code).Name}");
+            try 
+            { 
+                Console.WriteLine($"There's {availabilityService.GetCountAvailable(availability)} rooms of type {availability.RoomType} available in the {hotels.First(h => h.Id == availability.Code).Name}");
+            }
+            catch (KeyNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
