@@ -4,6 +4,6 @@ namespace HotelBooker.Interfaces
 {
     public interface IAvailabilityService
     {
-        public int GetCountAvailable(Availability availability);
+        public Dictionary<DateTime, int> GetDetailedAvailability(Availability availability);
     }
 }

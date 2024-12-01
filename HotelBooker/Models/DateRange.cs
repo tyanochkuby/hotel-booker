@@ -1,9 +1,9 @@
 ﻿namespace HotelBooker.Models
 {
-    public class DateRange
+    public record DateRange
     {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public DateTime Start { get; init; }
+        public DateTime End { get; init; }
 
         private DateRange()
         {
@@ -13,11 +13,6 @@
         {
             Start = start;
             End = end;
-        }
-
-        public bool Overlaps(DateRange other)
-        {
-            return Start < other.End && End > other.Start;
         }
     }
 

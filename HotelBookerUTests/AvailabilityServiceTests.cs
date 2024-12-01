@@ -63,7 +63,7 @@ namespace HotelBookerUTests
         }
 
         [Test]
-        public void GetCountAvailable_ShouldReturnCorrectCount()
+        public void GetDetailedAvailability_ShouldReturnCorrectAvailability()
         {
             // Arrange
             var hotels = GetTestHotels();
@@ -73,18 +73,41 @@ namespace HotelBookerUTests
             var availability = new Availability(
                 code: "H1",
                 roomType: "Single",
-                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(1))
+                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
             // Act
-            int availableCount = service.GetCountAvailable(availability);
+            var detailedAvailability = service.GetDetailedAvailability(availability);
 
             // Assert
-            Assert.That(availableCount, Is.EqualTo(1));
+            Assert.That(detailedAvailability[DateTime.Today], Is.EqualTo(1));
+            Assert.That(detailedAvailability[DateTime.Today.AddDays(1)], Is.EqualTo(1));
         }
 
         [Test]
-        public void GetCountAvailable_ShouldReturnZeroWhenFullyBooked()
+        public void GetDetailedAvailability_ShouldReturnFullAvailabilityWhenNoBookings()
+        {
+            // Arrange
+            var hotels = GetTestHotels();
+            var bookings = new List<Booking>(); // No bookings
+            var service = new AvailabilityService(hotels, bookings);
+
+            var availability = new Availability(
+                code: "H1",
+                roomType: "Single",
+                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
+            );
+
+            // Act
+            var detailedAvailability = service.GetDetailedAvailability(availability);
+
+            // Assert
+            Assert.That(detailedAvailability[DateTime.Today], Is.EqualTo(2));
+            Assert.That(detailedAvailability[DateTime.Today.AddDays(1)], Is.EqualTo(2));
+        }
+
+        [Test]
+        public void GetDetailedAvailability_ShouldThrowExceptionForInvalidHotelId()
         {
             // Arrange
             var hotels = GetTestHotels();
@@ -92,16 +115,32 @@ namespace HotelBookerUTests
             var service = new AvailabilityService(hotels, bookings);
 
             var availability = new Availability(
-                code: "H2",
+                code: "InvalidHotel",
                 roomType: "Single",
-                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(3))
+                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
-            // Act
-            int availableCount = service.GetCountAvailable(availability);
-
-            // Assert
-            Assert.That(availableCount, Is.EqualTo(0));
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => service.GetDetailedAvailability(availability));
         }
+
+        [Test]
+        public void GetDetailedAvailability_ShouldReturnFullAvailabilityForInvalidRoomType()
+        {
+            // Arrange
+            var hotels = GetTestHotels();
+            var bookings = GetTestBookings();
+            var service = new AvailabilityService(hotels, bookings);
+
+            var availability = new Availability(
+                code: "H1",
+                roomType: "InvalidRoomType",
+                dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => service.GetDetailedAvailability(availability));
+        }
+
     }
 }

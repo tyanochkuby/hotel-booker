@@ -1,6 +1,6 @@
 ﻿namespace HotelBooker.Models
 {
-    public class Availability
+    public record Availability
     {
         private Availability()
         {
@@ -8,13 +8,13 @@
 
         public Availability(string code, string roomType, DateRange dateRange)
         {
-            Code = code;
+            HotelId = code;
             RoomType = roomType;
             DateRange = dateRange;
         }
 
-        public string Code { get; set; }
-        public string RoomType { get; set; }
-        public DateRange DateRange { get; set; }
+        public string HotelId { get; init; }
+        public string RoomType { get; init; }
+        public DateRange DateRange { get; init; }
     }
 }
