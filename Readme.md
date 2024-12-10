@@ -21,7 +21,7 @@ This application previews hotel room availability and manages reservations. It r
    ```bash
    dotnet run --hotels <hotel_data_file> --bookings <booking_data_file>
 	```
-3. Once you see the message `"JSON files loaded successfully"`, you’re ready to check room availability.
+3. Once you see the message `"JSON files loaded successfully"`, youâ€™re ready to check room availability.
 
 ### Checking Availability
 
@@ -42,6 +42,13 @@ The response will be an integer specifying the amount of such rooms available.
 ### Example
 
 To check availability for a hotel with ID `H1`, staying from January 1 to January 3, 2025, in a "DBL" room:
-     ```
-	Availability(H1, 20250101-20250103, DBL)
-	```
+
+```
+Availability(H1, 20250101-20250103, DBL)
+```
+ 
+ To check availability for a hotel with ID `H2`, staying from January 7 to January 8, 2025, in a "SGL" room:
+     
+```
+Availability(H2, 20250107, SGL)
+```
