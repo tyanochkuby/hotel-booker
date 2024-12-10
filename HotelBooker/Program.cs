@@ -29,11 +29,13 @@ public class Program
             .AddSingleton<IAvailabilityService>(sp => new AvailabilityService(hotels, bookings))
             .AddSingleton<IAvailabilityParser, AvailabilityParser>()
             .AddSingleton<IDataValidator, DataValidator>()
+            .AddSingleton<ILogger, ConsoleLogger>()
             .BuildServiceProvider();
 
         var dataValidator = serviceProvider.GetRequiredService<IDataValidator>();
         var availabilityService = serviceProvider.GetRequiredService<IAvailabilityService>();
         var availabilityParser = serviceProvider.GetRequiredService<IAvailabilityParser>();
+        var logger = serviceProvider.GetRequiredService<ILogger>();
 
         try
         {
@@ -41,7 +43,7 @@ public class Program
         }
         catch (ArgumentException e)
         {
-            Console.WriteLine(e.Message);
+            logger.LogError(e.Message);
             return;
         }
 
@@ -50,41 +52,31 @@ public class Program
         string input;
         while ((input = Console.ReadLine()) != null && input != "")
         {
-            Availability availability;
+            AvailabilityQuery availabilityQuery;
             try
             {
-                availability = availabilityParser.Parse(input);
-                dataValidator.ValidateAvailability(availability);
+                availabilityQuery = availabilityParser.Parse(input);
+                dataValidator.ValidateAvailability(availabilityQuery);
             }
             catch (FormatException e)
             {
-                Console.WriteLine(e.Message);
+                logger.LogError(e.Message);
                 continue;
             }
             catch (ArgumentException e)
             {
-                Console.WriteLine(e.Message);
+                logger.LogError(e.Message);
                 continue;
             }
 
             try
             {
-                var detailedAvailability = availabilityService.GetDetailedAvailability(availability);
-
-                Console.WriteLine($"There are {detailedAvailability.Values.Min()} room(s) of type {availability.RoomType} in the {hotels.First(h => h.Id == availability.HotelId).Name} hotel available for the entire period from {availability.DateRange.Start.ToShortDateString()} to {availability.DateRange.End.ToShortDateString()}.");
-                if (detailedAvailability.Count == 1)
-                {
-                    continue;
-                }
-                Console.WriteLine($"Detailed availability for {availability.RoomType} in {hotels.First(h => h.Id == availability.HotelId).Name}:");
-                foreach (var entry in detailedAvailability)
-                {
-                    Console.WriteLine($"\t{entry.Key.ToShortDateString()} - {entry.Key.AddDays(1).ToShortDateString()}: {entry.Value} room(s) available");
-                }
+                var availability = availabilityService.GetTotalAvailability(availabilityQuery);
+                logger.Log(availability.ToString());
             }
             catch (ArgumentException e)
             {
-                Console.WriteLine(e.Message);
+                logger.LogError(e.Message);
             }
         }
     }

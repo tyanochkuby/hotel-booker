@@ -20,8 +20,8 @@ namespace HotelBookerUTests
                     Name = "Hotel One",
                     RoomTypes = new List<RoomType>
                     {
-                        new RoomType { Code = "Single", Description = "Single Room", Amenities = new List<string>(), Features = new List<string>() },
-                        new RoomType { Code = "Double", Description = "Double Room", Amenities = new List<string>(), Features = new List<string>() }
+                        new RoomType { Code = "Single", Description = "Single Room" },
+                        new RoomType { Code = "Double", Description = "Double Room" }
                     },
                     Rooms = new List<Room>
                     {
@@ -37,8 +37,8 @@ namespace HotelBookerUTests
                     Name = "Hotel Two",
                     RoomTypes = new List<RoomType>
                     {
-                        new RoomType { Code = "Single", Description = "Single Room", Amenities = new List<string>(), Features = new List<string>() },
-                        new RoomType { Code = "Double", Description = "Double Room", Amenities = new List<string>(), Features = new List<string>() }
+                        new RoomType {Code = "Single", Description = "Single Room"},
+                        new RoomType {Code = "Double", Description = "Double Room"}
                     },
                     Rooms = new List<Room>
                     {
@@ -70,18 +70,17 @@ namespace HotelBookerUTests
             var bookings = GetTestBookings();
             var service = new AvailabilityService(hotels, bookings);
 
-            var availability = new Availability(
-                code: "H1",
+            var availabilityQuery = new AvailabilityQuery(
+                hotelId: "H1",
                 roomType: "Single",
                 dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
             // Act
-            var detailedAvailability = service.GetDetailedAvailability(availability);
+            var availability = service.GetTotalAvailability(availabilityQuery);
 
             // Assert
-            Assert.That(detailedAvailability[DateTime.Today], Is.EqualTo(1));
-            Assert.That(detailedAvailability[DateTime.Today.AddDays(1)], Is.EqualTo(1));
+            Assert.That(availability, Is.EqualTo(1));
         }
 
         [Test]
@@ -92,18 +91,17 @@ namespace HotelBookerUTests
             var bookings = new List<Booking>(); // No bookings
             var service = new AvailabilityService(hotels, bookings);
 
-            var availability = new Availability(
-                code: "H1",
+            var availabilityQuery = new AvailabilityQuery(
+                hotelId: "H1",
                 roomType: "Single",
                 dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
             // Act
-            var detailedAvailability = service.GetDetailedAvailability(availability);
+            var availability = service.GetTotalAvailability(availabilityQuery);
 
             // Assert
-            Assert.That(detailedAvailability[DateTime.Today], Is.EqualTo(2));
-            Assert.That(detailedAvailability[DateTime.Today.AddDays(1)], Is.EqualTo(2));
+            Assert.That(availability, Is.EqualTo(2));
         }
 
         [Test]
@@ -114,14 +112,14 @@ namespace HotelBookerUTests
             var bookings = GetTestBookings();
             var service = new AvailabilityService(hotels, bookings);
 
-            var availability = new Availability(
-                code: "InvalidHotel",
+            var availabilityQuery = new AvailabilityQuery(
+                hotelId: "InvalidHotel",
                 roomType: "Single",
                 dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => service.GetDetailedAvailability(availability));
+            Assert.Throws<ArgumentException>(() => service.GetTotalAvailability(availabilityQuery));
         }
 
         [Test]
@@ -132,14 +130,14 @@ namespace HotelBookerUTests
             var bookings = GetTestBookings();
             var service = new AvailabilityService(hotels, bookings);
 
-            var availability = new Availability(
-                code: "H1",
+            var availabilityQuery = new AvailabilityQuery(
+                hotelId: "H1",
                 roomType: "InvalidRoomType",
                 dateRange: new DateRange(start: DateTime.Today, end: DateTime.Today.AddDays(2))
             );
 
             // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() => service.GetDetailedAvailability(availability));
+            var ex = Assert.Throws<ArgumentException>(() => service.GetTotalAvailability(availabilityQuery));
         }
 
     }

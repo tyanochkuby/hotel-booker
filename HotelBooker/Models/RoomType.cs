@@ -1,21 +1,23 @@
 ﻿using Newtonsoft.Json;
 
-namespace HotelBooker.Models
+namespace HotelBooker.Models;
+
+/// <summary>
+/// Represents a room type
+/// </summary>
+public class RoomType
 {
-    public class RoomType
-    {
-        [JsonProperty("code")]
-        [JsonRequired]
-        public string Code { get; set; }
+    /// <summary>
+    /// The room type's code
+    /// </summary>
+    [JsonProperty("code")]
+    [JsonRequired]
+    public string Code { get; set; }
 
-        [JsonProperty("description")]
-        public string Description { get; set; }
 
-        [JsonProperty("amenities")]
-        public List<string> Amenities { get; set; }
-
-        [JsonProperty("features")]
-        public List<string> Features { get; set; }
-    }
-
+    /// <summary>
+    /// The room type's description
+    /// </summary>
+    [JsonProperty("description")]
+    public string Description { get; set; }
 }
